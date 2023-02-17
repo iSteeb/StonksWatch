@@ -6,16 +6,23 @@
 //
 
 import SwiftUI
+import StocksAPI
 
 struct ContentView: View {
+    let stocksAPI = KISStocksAPI()
+    @State private var price = 0.0
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Text("\(price)")
+            Button {
+                Task {
+                    let test = try await stocksAPI.fetchQuotes(symbols: "SCG.AX").first?.regularMarketPrice
+                    price = test ?? 0.0
+                }
+            } label: {
+                Text("Fetch Price")
+            }
         }
-        .padding()
     }
 }
 

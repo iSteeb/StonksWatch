@@ -16,6 +16,8 @@
 		467546C4299D1C2E00879B2B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467546C3299D1C2E00879B2B /* ContentView.swift */; };
 		467546C6299D1C2E00879B2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 467546C5299D1C2E00879B2B /* Assets.xcassets */; };
 		467546C9299D1C2E00879B2B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 467546C8299D1C2E00879B2B /* Preview Assets.xcassets */; };
+		467546D5299D1D8F00879B2B /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 467546D4299D1D8F00879B2B /* StocksAPI */; };
+		46FD58CA299FAEBE001A2CB8 /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 46FD58C9299FAEBE001A2CB8 /* StocksAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				467546D5299D1D8F00879B2B /* StocksAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46FD58CA299FAEBE001A2CB8 /* StocksAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +83,7 @@
 				467546AE299D1C2D00879B2B /* StonksWatch */,
 				467546C0299D1C2E00879B2B /* StonksWatch Watch App */,
 				467546AD299D1C2D00879B2B /* Products */,
+				46FD58C8299FAEBE001A2CB8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,6 +134,13 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		46FD58C8299FAEBE001A2CB8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -147,6 +159,9 @@
 				467546BF299D1C2E00879B2B /* PBXTargetDependency */,
 			);
 			name = StonksWatch;
+			packageProductDependencies = (
+				467546D4299D1D8F00879B2B /* StocksAPI */,
+			);
 			productName = StonksWatch;
 			productReference = 467546AC299D1C2D00879B2B /* StonksWatch.app */;
 			productType = "com.apple.product-type.application";
@@ -164,6 +179,9 @@
 			dependencies = (
 			);
 			name = "StonksWatch Watch App";
+			packageProductDependencies = (
+				46FD58C9299FAEBE001A2CB8 /* StocksAPI */,
+			);
 			productName = "StonksWatch Watch App";
 			productReference = 467546BC299D1C2E00879B2B /* StonksWatch Watch App.app */;
 			productType = "com.apple.product-type.application";
@@ -195,6 +213,9 @@
 				Base,
 			);
 			mainGroup = 467546A3299D1C2D00879B2B;
+			packageReferences = (
+				467546D3299D1D8F00879B2B /* XCRemoteSwiftPackageReference "YahooFinanceKit" */,
+			);
 			productRefGroup = 467546AD299D1C2D00879B2B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -379,6 +400,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = duz.ie.StonksWatch;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,6 +431,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = duz.ie.StonksWatch;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -524,6 +547,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		467546D3299D1D8F00879B2B /* XCRemoteSwiftPackageReference "YahooFinanceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/DevDelleDonne/YahooFinanceKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		467546D4299D1D8F00879B2B /* StocksAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 467546D3299D1D8F00879B2B /* XCRemoteSwiftPackageReference "YahooFinanceKit" */;
+			productName = StocksAPI;
+		};
+		46FD58C9299FAEBE001A2CB8 /* StocksAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 467546D3299D1D8F00879B2B /* XCRemoteSwiftPackageReference "YahooFinanceKit" */;
+			productName = StocksAPI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 467546A4299D1C2D00879B2B /* Project object */;
 }
