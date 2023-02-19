@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "StonksWatchIcon.png",
       "idiom" : "universal",
       "platform" : "watchos",
       "size" : "1024x1024"
