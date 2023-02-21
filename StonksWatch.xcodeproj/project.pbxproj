@@ -17,6 +17,8 @@
 		467546C6299D1C2E00879B2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 467546C5299D1C2E00879B2B /* Assets.xcassets */; };
 		467546C9299D1C2E00879B2B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 467546C8299D1C2E00879B2B /* Preview Assets.xcassets */; };
 		467546D5299D1D8F00879B2B /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 467546D4299D1D8F00879B2B /* StocksAPI */; };
+		46E9AEED29A57B4100000D1E /* StockPortfolioClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */; };
+		46E9AEEE29A57B4100000D1E /* StockPortfolioClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */; };
 		46FD58CA299FAEBE001A2CB8 /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 46FD58C9299FAEBE001A2CB8 /* StocksAPI */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +57,7 @@
 		467546C3299D1C2E00879B2B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		467546C5299D1C2E00879B2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		467546C8299D1C2E00879B2B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockPortfolioClass.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,7 @@
 		467546A3299D1C2D00879B2B = {
 			isa = PBXGroup;
 			children = (
+				46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */,
 				467546AE299D1C2D00879B2B /* StonksWatch */,
 				467546C0299D1C2E00879B2B /* StonksWatch Watch App */,
 				467546AD299D1C2D00879B2B /* Products */,
@@ -253,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				467546B2299D1C2D00879B2B /* ContentView.swift in Sources */,
+				46E9AEED29A57B4100000D1E /* StockPortfolioClass.swift in Sources */,
 				467546B0299D1C2D00879B2B /* StonksWatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				467546C4299D1C2E00879B2B /* ContentView.swift in Sources */,
+				46E9AEEE29A57B4100000D1E /* StockPortfolioClass.swift in Sources */,
 				467546C2299D1C2E00879B2B /* StonksWatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
