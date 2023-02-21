@@ -17,7 +17,7 @@ struct ContentView: View {
     @StateObject var portfolio = StockPortfolio()
     
     var body: some View {
-        VStack {
+        ScrollView {
             ForEach(portfolio.shares, id: \.self.code) { share in
                 HStack {
                     Text(share.code)
@@ -31,11 +31,17 @@ struct ContentView: View {
             Text("\(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossDollar)")
             Text("\(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossPercent)")
             
-//            Button("Refresh") {
-//                Task {
-//                    await refresh()
-//                }
-//            }
+            Button("Refresh") {
+                Task {
+                    await refresh()
+                }
+            }
+            Button("QUICKADD") {
+                data = "AXE.AX/1500/1.5816|DEG.AX/6000/0.7671|ITM.AX/314/0.000|LKE.AX/2704/0.8548|NVX.AX/1000/3.8295|SCG.AX/10000/2.0282|VCX.AX/10000/1.3297"
+                Task {
+                    await refresh()
+                }
+            }
             Button("Notify") {
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
                     if success {
@@ -64,6 +70,7 @@ struct ContentView: View {
             await refresh()
         }
     }
+
     
     fileprivate func refresh() async {
         if (data != "") {

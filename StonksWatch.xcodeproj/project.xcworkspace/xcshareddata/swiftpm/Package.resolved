@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "yahoofinancekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DevDelleDonne/YahooFinanceKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "13c5de4d85e8abfc7b6827272f60652334719ca7"
+      }
+    }
+  ],
+  "version" : 2
+}
