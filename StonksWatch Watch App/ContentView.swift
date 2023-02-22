@@ -22,7 +22,7 @@ struct ContentView: View {
                 HStack {
                     Text(share.code)
                         .font(.footnote)
-                    Text("\(portfolio.getPLFromSymbol(share: share, quotes: quotes).profitLossDollar)")
+                    Text("\(portfolio.getPLFromSymbol(share: share, quotes: quotes).changeDollar)")
                         .font(.footnote)
                 }
             }
