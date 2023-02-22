@@ -83,13 +83,12 @@ class StockPortfolio: ObservableObject {
     func getPortfolioPLTotals(quotes: [Quote]) -> (totalChangeDollar: Double, totalChangePC: Double, totalProfitLossDollar: Double, totalProfitLossPercent: Double){
         var totalSpent: Double = 0.0
         var totalGained: Double = 0.0
-        var totalChangeDollar = 0.0
+        var totalChangeDollar: Double = 0.0
         shares.forEach { share in
             totalSpent += Double(share.units) * share.averagePurchasePrice
             totalGained += getPLFromSymbol(share: share, quotes: quotes).profitLossDollar
-            totalChangeDollar += Double(share.units) * getPLFromSymbol(share: share, quotes: quotes).changeDollar
+            totalChangeDollar += getPLFromSymbol(share: share, quotes: quotes).changeDollar
         }
-        let totalChangePC = 0.0
-        return (totalChangeDollar, totalChangePC, totalGained, totalGained / totalSpent * 100) // TODO: Figure out the tcpc, maybe need to check other vals too
+        return (totalChangeDollar, totalChangeDollar / (totalSpent + totalGained - totalChangeDollar) * 100, totalGained, totalGained / totalSpent * 100) // TODO: Figure out the tcpc, maybe need to check other vals too
     }
 }
