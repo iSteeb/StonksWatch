@@ -11,7 +11,8 @@ import UserNotifications
 
 struct ContentView: View {
     @AppStorage("DATA") var data = ""
-    
+    @AppStorage("NOTIF") var notificationsOn: Bool = false
+
     let stocksAPI: KISStocksAPI = KISStocksAPI()
     @State var quotes: [Quote] = []
     @StateObject var portfolio: StockPortfolio = StockPortfolio()
@@ -20,13 +21,25 @@ struct ContentView: View {
     @State var addUnits: String = ""
     @State var addAveragePurchasePrice: String = ""
     @State var showEditModal: Bool = false
-
     
-    @Environment (\.presentationMode) var presentationMode
-    @Environment (\.dismiss) private var dismiss
     var body: some View {
         VStack {
             NavigationStack {
+                HStack {
+                    VStack {
+                        Text("Δ $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangeDollar, specifier: "%.2f")")
+                            .font(.footnote)
+                        Text("Δ \(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangePC, specifier: "%.2f")%")
+                            .font(.footnote)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("± $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossDollar, specifier: "%.2f")")
+                            .font(.footnote)
+                        Text("± \(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossPercent, specifier: "%.2f")%")
+                            .font(.footnote)
+                    }
+                }
                 HStack {
                     Button {
                         Task {
@@ -40,6 +53,33 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "plus.circle")
                     }
+                    if (notificationsOn) {
+                        Button {
+                            notificationsOn.toggle()
+                            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                        } label: {
+                            Image(systemName: "bell.circle")
+                        }
+                    } else {
+                        Button {
+                            UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { success, error in
+                                if success {
+                                    notificationsOn.toggle()
+                                    let content = UNMutableNotificationContent()
+                                    content.title = "Feed the cat"
+                                    content.body = "It looks hungry"
+                                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                                    UNUserNotificationCenter.current().add(request)
+                                } else if let error = error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "bell.slash.circle")
+                        }
+                    }
+                    
                 }
                 List(portfolio.shares, id: \.self.code) { share in
                     NavigationLink {
@@ -83,6 +123,11 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $showEditModal) {
                         VStack {
+                            Text(addCode)
+                            TextField("\(addUnits) QUANTITY", text: $addUnits)
+                                .autocorrectionDisabled()
+                            TextField("\(addAveragePurchasePrice) AVERAGE PURCHASE PRICE", text: $addAveragePurchasePrice)
+                                .autocorrectionDisabled()
                             HStack {
                                 Button {
                                     showEditModal.toggle()
@@ -109,29 +154,20 @@ struct ContentView: View {
                                     Image(systemName: "paperplane.circle")
                                 }
                             }
-                            Text(addCode)
-                            TextField("\(addUnits) QUANTITY", text: $addUnits)
-                                .autocorrectionDisabled()
-                            TextField("\(addAveragePurchasePrice) AVERAGE PURCHASE PRICE", text: $addAveragePurchasePrice)
-                                .autocorrectionDisabled()
                         }
                         .navigationBarHidden(true)
                     }
-                }
-                HStack {
-                    VStack {
-                        Text("Δ $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangeDollar, specifier: "%.2f")")
-                        Text("Δ \(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangePC, specifier: "%.2f")%")
-                    }
-                    Spacer()
-                    VStack {
-                        Text("± $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossDollar, specifier: "%.2f")")
-                        Text("± \(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossPercent, specifier: "%.2f")%")
-                    }
+                    
                 }
             }
             .sheet(isPresented: $showAddModal, content: {
                 VStack {
+                    TextField("CODE", text: $addCode)
+                        .autocorrectionDisabled()
+                    TextField("QUANTITY", text: $addUnits)
+                        .autocorrectionDisabled()
+                    TextField("AVERAGE PURCHASE PRICE", text: $addAveragePurchasePrice)
+                        .autocorrectionDisabled()
                     HStack {
                         Button {
                             showAddModal.toggle()
@@ -158,12 +194,6 @@ struct ContentView: View {
                             Image(systemName: "paperplane.circle")
                         }
                     }
-                    TextField("CODE", text: $addCode)
-                        .autocorrectionDisabled()
-                    TextField("QUANTITY", text: $addUnits)
-                        .autocorrectionDisabled()
-                    TextField("AVERAGE PURCHASE PRICE", text: $addAveragePurchasePrice)
-                        .autocorrectionDisabled()
                 }
                 .navigationBarHidden(true)
             })
@@ -172,7 +202,6 @@ struct ContentView: View {
             }
         }
     }
-    
     
     fileprivate func refresh() async {
         if (data != "") {

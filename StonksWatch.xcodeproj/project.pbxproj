@@ -47,6 +47,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		460223C629A65F8C00041D13 /* StonksWatch-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "StonksWatch-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
+		460223C729A65FCF00041D13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		467546AC299D1C2D00879B2B /* StonksWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StonksWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		467546AF299D1C2D00879B2B /* StonksWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StonksWatchApp.swift; sourceTree = "<group>"; };
 		467546B1299D1C2D00879B2B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		467546AE299D1C2D00879B2B /* StonksWatch */ = {
 			isa = PBXGroup;
 			children = (
+				460223C729A65FCF00041D13 /* Info.plist */,
 				467546AF299D1C2D00879B2B /* StonksWatchApp.swift */,
 				467546B1299D1C2D00879B2B /* ContentView.swift */,
 				467546B3299D1C2E00879B2B /* Assets.xcassets */,
@@ -122,6 +125,7 @@
 		467546C0299D1C2E00879B2B /* StonksWatch Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				460223C629A65F8C00041D13 /* StonksWatch-Watch-App-Info.plist */,
 				467546C1299D1C2E00879B2B /* StonksWatchApp.swift */,
 				467546C3299D1C2E00879B2B /* ContentView.swift */,
 				467546C5299D1C2E00879B2B /* Assets.xcassets */,
@@ -403,6 +407,7 @@
 				DEVELOPMENT_TEAM = 7997G399U7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "StonksWatch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = duz.ie.StonksWatch;
@@ -434,6 +439,7 @@
 				DEVELOPMENT_TEAM = 7997G399U7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "StonksWatch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = duz.ie.StonksWatch;
@@ -467,6 +473,7 @@
 				DEVELOPMENT_TEAM = 7997G399U7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StonksWatch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -500,6 +507,7 @@
 				DEVELOPMENT_TEAM = 7997G399U7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StonksWatch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StonksWatch;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
