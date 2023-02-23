@@ -9,13 +9,11 @@ import SwiftUI
 import UserNotifications
 
 struct ContentView: View {
-    @Environment(\.scenePhase) var scenePhase
-
     @StateObject var portfolio = StockPortfolio.shared
-
+    
     @AppStorage("DATA") var data = ""
     @AppStorage("NOTIF") var notificationsOn: Bool = false
-
+    
     @State var showAddModal: Bool = false
     @State var addCode: String = ""
     @State var addUnits: String = ""
@@ -29,9 +27,9 @@ struct ContentView: View {
                 MainControlsView()
                 List(portfolio.shares, id: \.self.code) { share in
                     ShareDetailsView(share)
-                    .sheet(isPresented: $showEditModal) {
-                        EditModalView()
-                    }
+                        .sheet(isPresented: $showEditModal) {
+                            EditModalView()
+                        }
                 }
             }
             .sheet(isPresented: $showAddModal, content: {
@@ -61,10 +59,7 @@ struct ContentView: View {
                     // TODO: CHECK STOCK CODE AND WAY IMPROVE ERROR CHECKING IN GENERAL
                     if ((Int(addUnits) != nil) && (Double(addAveragePurchasePrice) != nil)) {
                         portfolio.add(code: addCode.uppercased(), units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
-                        data = portfolio.encode()
-                        Task {
-                            await portfolio.refreshQuotes()
-                        }
+                        saveAndRefresh()
                         showAddModal.toggle()
                         addCode = ""
                         addUnits = ""
@@ -98,10 +93,7 @@ struct ContentView: View {
                     // TODO: IMPROVE ERROR CHECKING IN GENERAL
                     if ((Int(addUnits) != nil) && (Double(addAveragePurchasePrice) != nil)) {
                         portfolio.update(code: addCode, units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
-                        data = portfolio.encode()
-                        Task {
-                            await portfolio.refreshQuotes()
-                        }
+                        saveAndRefresh()
                         showEditModal.toggle()
                         addCode = ""
                         addUnits = ""
@@ -113,6 +105,13 @@ struct ContentView: View {
             }
         }
         .navigationBarHidden(true)
+    }
+    
+    fileprivate func saveAndRefresh() {
+        data = portfolio.encode()
+        Task {
+            await portfolio.refreshQuotes()
+        }
     }
     
     fileprivate func ShareDetailsView(_ share: (code: String, units: Int, averagePurchasePrice: Double)) -> NavigationLink<HStack<TupleView<(Text, Spacer, VStack<TupleView<(Text, Text)>>)>>, TupleView<(HStack<TupleView<(Button<Image>, Button<Image>)>>, Text, Text, Text, Text, Text, Text, Text)>> {
@@ -128,10 +127,8 @@ struct ContentView: View {
                 }
                 Button {
                     portfolio.remove(code: share.code)
-                    data = portfolio.encode()
-                    Task {
-                        await portfolio.refreshQuotes()
-                    } // TODO: Dismiss view
+                    saveAndRefresh()
+                    // TODO: Dismiss view
                 } label: {
                     Image(systemName: "trash.circle")
                 }
@@ -178,9 +175,7 @@ struct ContentView: View {
     fileprivate func MainControlsView() -> HStack<TupleView<(Button<Image>, Button<Image>, _ConditionalContent<Button<Image>, Button<Image>>)>> {
         return HStack {
             Button {
-                Task {
-                    await portfolio.refreshQuotes()
-                }
+                saveAndRefresh()
             } label: {
                 Image(systemName: "arrow.clockwise.circle")
             }
@@ -193,25 +188,16 @@ struct ContentView: View {
                 Button {
                     notificationsOn.toggle()
                     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                    // TODO: remove all background tasks
                 } label: {
                     Image(systemName: "bell.circle")
                 }
             } else {
                 Button {
                     notificationsOn.toggle()
-                    WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: Date(timeIntervalSinceNow: 5), userInfo: nil) { (error: Error?) in
-                        if let error = error {
-                            print("Error occured while scheduling background refresh: \(error.localizedDescription)")
-                        } else {
-                            print("scheduled")
-                        }
-                    }
                 } label: {
                     Image(systemName: "bell.slash.circle")
                 }
             }
-            
         }
     }
 }

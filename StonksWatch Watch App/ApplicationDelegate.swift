@@ -15,50 +15,62 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
     var portfolio = StockPortfolio.shared
     
     func applicationDidBecomeActive() {
-        print("active") // TODO: figure out how to get refresh function in here, and then replace onchange and onappear with this
+        print("app is now active")
+        portfolio.shares = portfolio.decode(data: UserDefaults.standard.string(forKey: "DATA") ?? "")
         Task {
             await portfolio.refreshQuotes()
-            print("refreshed")
+            print("quotes refreshed")
         }
     }
     
     func applicationDidEnterBackground() {
-        print("inactive") // TODO: check if notifications are on and, if so, schedule a background task as below
+        print("app is now inactive")
+        scheduleNextNotificationTask()
     }
 
     func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
         for task in backgroundTasks {
-            print("handling")
-            
-            scheduleNextNotificationTask()
-            formNotification()
-            
-            task.setTaskCompletedWithSnapshot(false)
+            switch task {
+                
+            case let bgRefreshTask as WKApplicationRefreshBackgroundTask:
+                scheduleNextNotificationTask()
+                formNotification()
+                print("background refresh executed")
+
+                bgRefreshTask.setTaskCompletedWithSnapshot(false)
+                
+            default:
+                task.setTaskCompletedWithSnapshot(false)
+            }
         }
     }
     
     func scheduleNextNotificationTask() {
-        let calendar = Calendar.current
-        let today = Date()
-        let midnight = calendar.startOfDay(for: today)
-        var target = calendar.date(byAdding: .hour, value: 9, to: midnight)!
-        target = calendar.date(byAdding: .minute, value: 7, to: target)!
-        // TODO: GET THE DATE THING HAPPENING
-        WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: Date(timeIntervalSinceNow: 5), userInfo: nil) { (error: Error?) in
-            if let error = error {
-                print("Error occured while scheduling background refresh: \(error.localizedDescription)")
-            } else {
-                print("scheduled")
+        if (UserDefaults.standard.bool(forKey: "NOTIF")) {
+            let calendar = Calendar.current
+            let today = Date()
+            let midnight = calendar.startOfDay(for: today)
+            var target = calendar.date(byAdding: .hour, value: 9, to: midnight)!
+            target = calendar.date(byAdding: .minute, value: 7, to: target)!
+            // TODO: GET THE DATE THING HAPPENING
+            WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: Date(timeIntervalSinceNow: 5), userInfo: nil) { (error: Error?) in
+                if let error = error {
+                    print("error occured while scheduling background refresh: \(error.localizedDescription)")
+                } else {
+                    print("background refresh scheduled")
+                }
             }
         }
     }
     
     func formNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "\(portfolio.shares)"
-        content.body = "\(portfolio.quotes)"
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
+        if (UserDefaults.standard.bool(forKey: "NOTIF")) {
+            let content = UNMutableNotificationContent()
+            content.title = "\(portfolio.shares)"
+            content.body = "\(portfolio.quotes)"
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request)
+        }
     }
 }
