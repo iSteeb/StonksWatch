@@ -12,30 +12,77 @@ struct ContentView: View {
     @StateObject var portfolio = StockPortfolio.shared
     
     @AppStorage("DATA") var data = ""
+    
+    @State var showNotifModal: Bool = false
     @AppStorage("NOTIF") var notificationsOn: Bool = false
+    @AppStorage("NOTIFhr") var notifHR: Int = 0
+    @AppStorage("NOTIFmin") var notifMIN: Int = 0
     
     @State var showAddModal: Bool = false
     @State var addCode: String = ""
     @State var addUnits: String = ""
     @State var addAveragePurchasePrice: String = ""
-    @State var showEditModal: Bool = false
     
-    var body: some View {
-        VStack {
-            NavigationStack {
-                MainTotalsView()
-                MainControlsView()
-                List(portfolio.shares, id: \.self.code) { share in
-                    ShareDetailsView(share)
-                        .sheet(isPresented: $showEditModal) {
-                            EditModalView()
-                        }
+    fileprivate func notifTimeModalView() -> some View {
+        return VStack {
+            HStack {
+                Picker("Hour", selection: $notifHR) {
+                    ForEach(0..<24) { i in
+                        Text("\((i))")
+                    }
+                }
+                Picker("Minute", selection: $notifMIN) {
+                    ForEach(0..<60) { i in
+                        Text("\((i))")
+                    }
                 }
             }
-            .sheet(isPresented: $showAddModal, content: {
-                AddModalView()
-            })
+            HStack {
+                Button {
+                    showNotifModal.toggle()
+                    notificationsOn.toggle()
+                } label: {
+                    Image(systemName: "x.circle")
+                }
+                Button {
+                    showNotifModal.toggle()
+                } label: {
+                    Image(systemName: "checkmark.circle")
+                }
+            }
         }
+        .navigationBarHidden(true)
+    }
+    
+    var body: some View {
+        NavigationStack {
+            MainTotalsView()
+            MainControlsView()
+                .sheet(isPresented: $showNotifModal) {
+                    notifTimeModalView()
+                }
+            List(portfolio.shares, id: \.self.code) { share in
+                NavigationLink {
+                    ShareDetailsView(share: share)
+                } label: {
+                    HStack {
+                        Text(share.code)
+                        Spacer()
+                        VStack {
+                            Text("Δ $\(portfolio.getPLFromSymbol(share: share).changeDollar, specifier: "%.2f")")
+                                .font(.footnote)
+                            Text("± \(portfolio.getPLFromSymbol(share: share).profitLossPercent, specifier: "%.2f")%")
+                                .font(.footnote)
+                        }
+                    }
+                }
+                .navigationBarBackButtonHidden(true)
+                .navigationBarHidden(true)
+            }
+        }
+        .sheet(isPresented: $showAddModal, content: {
+            AddModalView()
+        })
     }
     
     fileprivate func AddModalView() -> some View {
@@ -56,7 +103,8 @@ struct ContentView: View {
                     Image(systemName: "x.circle")
                 }
                 Button {
-                    // TODO: CHECK STOCK CODE AND WAY IMPROVE ERROR CHECKING IN GENERAL
+                    // TODO: Input sanitisation
+                    // TODO: Error notification if failed
                     if ((Int(addUnits) != nil) && (Double(addAveragePurchasePrice) != nil)) {
                         portfolio.add(code: addCode.uppercased(), units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
                         saveAndRefresh()
@@ -66,46 +114,13 @@ struct ContentView: View {
                         addAveragePurchasePrice = ""
                     }
                 } label: {
-                    Image(systemName: "paperplane.circle")
+                    Image(systemName: "checkmark.circle")
                 }
             }
         }
         .navigationBarHidden(true)
     }
     
-    fileprivate func EditModalView() -> some View {
-        return VStack {
-            Text(addCode)
-            TextField("\(addUnits) QUANTITY", text: $addUnits)
-                .autocorrectionDisabled()
-            TextField("\(addAveragePurchasePrice) AVERAGE PURCHASE PRICE", text: $addAveragePurchasePrice)
-                .autocorrectionDisabled()
-            HStack {
-                Button {
-                    showEditModal.toggle()
-                    addCode = ""
-                    addUnits = ""
-                    addAveragePurchasePrice = ""
-                } label: {
-                    Image(systemName: "x.circle")
-                }
-                Button {
-                    // TODO: IMPROVE ERROR CHECKING IN GENERAL
-                    if ((Int(addUnits) != nil) && (Double(addAveragePurchasePrice) != nil)) {
-                        portfolio.update(code: addCode, units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
-                        saveAndRefresh()
-                        showEditModal.toggle()
-                        addCode = ""
-                        addUnits = ""
-                        addAveragePurchasePrice = ""
-                    }
-                } label: {
-                    Image(systemName: "paperplane.circle")
-                }
-            }
-        }
-        .navigationBarHidden(true)
-    }
     
     fileprivate func saveAndRefresh() {
         data = portfolio.encode()
@@ -114,47 +129,7 @@ struct ContentView: View {
         }
     }
     
-    fileprivate func ShareDetailsView(_ share: (code: String, units: Int, averagePurchasePrice: Double)) -> NavigationLink<HStack<TupleView<(Text, Spacer, VStack<TupleView<(Text, Text)>>)>>, TupleView<(HStack<TupleView<(Button<Image>, Button<Image>)>>, Text, Text, Text, Text, Text, Text, Text)>> {
-        return NavigationLink {
-            HStack {
-                Button {
-                    showEditModal.toggle()
-                    addCode = share.code
-                    addUnits = String(share.units)
-                    addAveragePurchasePrice = String(share.averagePurchasePrice)
-                } label: {
-                    Image(systemName: "pencil.circle")
-                }
-                Button {
-                    portfolio.remove(code: share.code)
-                    saveAndRefresh()
-                    // TODO: Dismiss view
-                } label: {
-                    Image(systemName: "trash.circle")
-                }
-            }
-            Text(share.code)
-            Text("\(share.units) units")
-            Text("Av. PP $\(share.averagePurchasePrice, specifier: "%.4f")")
-            Text("Δ $\(portfolio.getPLFromSymbol(share: share).changeDollar, specifier: "%.2f")")
-            Text("Δ \(portfolio.getPLFromSymbol(share: share).changePC, specifier: "%.2f")%")
-            Text("± $\(portfolio.getPLFromSymbol(share: share).profitLossDollar, specifier: "%.2f")")
-            Text("± \(portfolio.getPLFromSymbol(share: share).profitLossPercent, specifier: "%.2f")%")
-        } label: {
-            HStack {
-                Text(share.code)
-                Spacer()
-                VStack {
-                    Text("Δ $\(portfolio.getPLFromSymbol(share: share).changeDollar, specifier: "%.2f")")
-                        .font(.footnote)
-                    Text("± \(portfolio.getPLFromSymbol(share: share).profitLossPercent, specifier: "%.2f")%")
-                        .font(.footnote)
-                }
-            }
-        }
-    }
-    
-    fileprivate func MainTotalsView() -> HStack<TupleView<(VStack<TupleView<(Text, Text)>>, Spacer, VStack<TupleView<(Text, Text)>>)>> {
+    fileprivate func MainTotalsView() -> some View {
         return HStack {
             VStack {
                 Text("Δ $\(portfolio.getPortfolioPLTotals().totalChangeDollar, specifier: "%.2f")")
@@ -172,7 +147,7 @@ struct ContentView: View {
         }
     }
     
-    fileprivate func MainControlsView() -> HStack<TupleView<(Button<Image>, Button<Image>, _ConditionalContent<Button<Image>, Button<Image>>)>> {
+    fileprivate func MainControlsView() -> some View {
         return HStack {
             Button {
                 saveAndRefresh()
@@ -194,6 +169,7 @@ struct ContentView: View {
             } else {
                 Button {
                     notificationsOn.toggle()
+                    showNotifModal.toggle()
                 } label: {
                     Image(systemName: "bell.slash.circle")
                 }

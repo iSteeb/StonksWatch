@@ -96,7 +96,8 @@ class StockPortfolio: ObservableObject {
             
             return (changeDollar: Double(share.units) * changeSinceYesterday, changePC: changeSinceYesterday / quote!.regularMarketPreviousClose! * 100, profitLossDollar: totalProfit, profitLossPercent: totalProfit / totalPurchasePrice * 100)
         }
-        return (0.0,0.0,0.0,0.0) // TODO: FIX THIS LAZY ERROR RETURN
+        // if this method could return nil, the program should execute regardless with this value as a default value. simpler to return default directly
+        return (0.0,0.0,0.0,0.0)
     }
     
     func getPortfolioPLTotals() -> (totalChangeDollar: Double, totalChangePC: Double, totalProfitLossDollar: Double, totalProfitLossPercent: Double){

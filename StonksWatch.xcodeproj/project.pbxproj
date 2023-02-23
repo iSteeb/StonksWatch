@@ -18,6 +18,7 @@
 		467546C9299D1C2E00879B2B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 467546C8299D1C2E00879B2B /* Preview Assets.xcassets */; };
 		467546D5299D1D8F00879B2B /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 467546D4299D1D8F00879B2B /* StocksAPI */; };
 		467C20FB29A7BD1E009B22E0 /* ApplicationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467C20FA29A7BD1E009B22E0 /* ApplicationDelegate.swift */; };
+		467C20FD29A7F922009B22E0 /* ShareDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467C20FC29A7F922009B22E0 /* ShareDetailsView.swift */; };
 		46E9AEED29A57B4100000D1E /* StockPortfolioClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */; };
 		46E9AEEE29A57B4100000D1E /* StockPortfolioClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */; };
 		46FD58CA299FAEBE001A2CB8 /* StocksAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 46FD58C9299FAEBE001A2CB8 /* StocksAPI */; };
@@ -61,6 +62,7 @@
 		467546C5299D1C2E00879B2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		467546C8299D1C2E00879B2B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		467C20FA29A7BD1E009B22E0 /* ApplicationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationDelegate.swift; sourceTree = "<group>"; };
+		467C20FC29A7F922009B22E0 /* ShareDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDetailsView.swift; sourceTree = "<group>"; };
 		46E9AEEC29A57B4100000D1E /* StockPortfolioClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockPortfolioClass.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,6 +133,7 @@
 				460223C629A65F8C00041D13 /* StonksWatch-Watch-App-Info.plist */,
 				467546C1299D1C2E00879B2B /* StonksWatchApp.swift */,
 				467546C3299D1C2E00879B2B /* ContentView.swift */,
+				467C20FC29A7F922009B22E0 /* ShareDetailsView.swift */,
 				467546C5299D1C2E00879B2B /* Assets.xcassets */,
 				467546C7299D1C2E00879B2B /* Preview Content */,
 			);
@@ -277,6 +280,7 @@
 				46E9AEEE29A57B4100000D1E /* StockPortfolioClass.swift in Sources */,
 				467546C2299D1C2E00879B2B /* StonksWatchApp.swift in Sources */,
 				467C20FB29A7BD1E009B22E0 /* ApplicationDelegate.swift in Sources */,
+				467C20FD29A7F922009B22E0 /* ShareDetailsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
