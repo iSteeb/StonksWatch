@@ -9,14 +9,14 @@ import Foundation
 import StocksAPI
 
 class StockPortfolio: ObservableObject {
-    let stocksAPI: KISStocksAPI = KISStocksAPI()
-
-    @Published var shares = [(code: String, units: Int, averagePurchasePrice: Double)]()
+    static let shared = StockPortfolio()
+    
+    @Published var shares: [(code: String, units: Int, averagePurchasePrice: Double)] = []
     @Published var quotes: [Quote] = []
 
-    init() {
-        self.shares = []
-    }
+    let stocksAPI: KISStocksAPI = KISStocksAPI()
+
+    private init() {}
     
     func decode(data: String) -> [(code: String, units: Int, averagePurchasePrice: Double)] {
         if (data == "") {

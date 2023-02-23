@@ -11,7 +11,7 @@ import UserNotifications
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
 
-    @StateObject var portfolio: StockPortfolio
+    @StateObject var portfolio = StockPortfolio.shared
 
     @AppStorage("DATA") var data = ""
     @AppStorage("NOTIF") var notificationsOn: Bool = false
@@ -193,26 +193,12 @@ struct ContentView: View {
                 }
                 .navigationBarHidden(true)
             })
-            .onAppear(perform: {
-                Task {
-                    print("first load")
-                    await portfolio.refreshQuotes()
-                }
-            })
-            .onChange(of: scenePhase, perform: { newPhase in
-                if newPhase == .active {
-                    Task {
-                        print("refreshing")
-                        await portfolio.refreshQuotes()
-                    }
-                }
-            })
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(portfolio: StockPortfolio())
+        ContentView()
     }
 }

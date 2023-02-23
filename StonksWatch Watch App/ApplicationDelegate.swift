@@ -12,8 +12,14 @@ import UserNotifications
 // TODO: Have to handle the task if app is still in foreground ugh
 
 class ApplicationDelegate: NSObject, WKApplicationDelegate {
+    var portfolio = StockPortfolio.shared
+    
     func applicationDidBecomeActive() {
         print("active") // TODO: figure out how to get refresh function in here, and then replace onchange and onappear with this
+        Task {
+            await portfolio.refreshQuotes()
+            print("refreshed")
+        }
     }
     
     func applicationDidEnterBackground() {
