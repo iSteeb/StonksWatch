@@ -9,8 +9,6 @@ import Foundation
 import WatchKit
 import UserNotifications
 
-// TODO: Have to handle the task if app is still in foreground ugh
-
 class ApplicationDelegate: NSObject, WKApplicationDelegate {
     var portfolio = StockPortfolio.shared
     
@@ -47,20 +45,24 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
     
     func scheduleNextNotificationTask() {
         if (UserDefaults.standard.bool(forKey: "NOTIF")) {
-            let calendar = Calendar.current
-            let today = Date()
-            let midnight = calendar.startOfDay(for: today)
-            var target = calendar.date(byAdding: .hour, value: 9, to: midnight)!
-            target = calendar.date(byAdding: .minute, value: 7, to: target)!
-            // TODO: GET THE DATE THING HAPPENING
-            WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: Date(timeIntervalSinceNow: 5), userInfo: nil) { (error: Error?) in
-                if let error = error {
-                    print("error occured while scheduling background refresh: \(error.localizedDescription)")
-                } else {
-                    print("background refresh scheduled")
+            let nextMarketCloseDate = getNextMarketCloseDate()
+            if (nextMarketCloseDate != nil){
+                WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: nextMarketCloseDate!, userInfo: nil) { (error: Error?) in
+                    if let error = error {
+                        print("error occured while scheduling background refresh: \(error.localizedDescription)")
+                    } else {
+                        print("background refresh scheduled at \(UserDefaults.standard.integer(forKey: "NOTIFhr")):\(UserDefaults.standard.integer(forKey: "NOTIFmin"))")
+                    }
                 }
             }
         }
+    }
+    
+    func getNextMarketCloseDate() -> Date? {
+        // TODO: Improve date selection (i.e. not weekends, timezones, etc.)
+        let target = Calendar(identifier: .gregorian).nextDate(after: Date(), matching: DateComponents.init(hour: UserDefaults.standard.integer(forKey: "NOTIFhr"), minute: UserDefaults.standard.integer(forKey: "NOTIFmin")), matchingPolicy: .strict)
+
+        return target
     }
     
     func formNotification() {
@@ -68,7 +70,7 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
             let content = UNMutableNotificationContent()
 
             content.title = "Market Close Report"
-            content.body = "Δ $\(portfolio.getPortfolioPLTotals().totalChangeDollar.rounded()) | ± \(portfolio.getPortfolioPLTotals().totalProfitLossPercent.rounded())%"
+            content.body = "Δ \(portfolio.getPortfolioPLTotals().totalChangePC.rounded())% | ± $\(portfolio.getPortfolioPLTotals().totalProfitLossPercent.rounded())"
             portfolio.shares.forEach { share in
                 content.body += " \n\(share.code) | Δ \(portfolio.getPLFromSymbol(share: share).changePC.rounded())%"
             }
