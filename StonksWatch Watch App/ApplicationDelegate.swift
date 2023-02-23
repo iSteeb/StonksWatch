@@ -66,8 +66,12 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
     func formNotification() {
         if (UserDefaults.standard.bool(forKey: "NOTIF")) {
             let content = UNMutableNotificationContent()
-            content.title = "\(portfolio.shares)"
-            content.body = "\(portfolio.quotes)"
+
+            content.title = "Market Close Report"
+            content.body = "Δ $\(portfolio.getPortfolioPLTotals().totalChangeDollar.rounded()) | ± \(portfolio.getPortfolioPLTotals().totalProfitLossPercent.rounded())%"
+            portfolio.shares.forEach { share in
+                content.body += " \n\(share.code) | Δ \(portfolio.getPLFromSymbol(share: share).changePC.rounded())%"
+            }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
             UNUserNotificationCenter.current().add(request)
