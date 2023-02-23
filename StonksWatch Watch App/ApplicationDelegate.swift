@@ -12,6 +12,14 @@ import UserNotifications
 // TODO: Have to handle the task if app is still in foreground ugh
 
 class ApplicationDelegate: NSObject, WKApplicationDelegate {
+    func applicationDidBecomeActive() {
+        print("active") // TODO: figure out how to get refresh function in here, and then replace onchange and onappear with this
+    }
+    
+    func applicationDidEnterBackground() {
+        print("inactive") // TODO: check if notifications are on and, if so, schedule a background task as below
+    }
+
     func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
         let calendar = Calendar.current
         let today = Date()
@@ -30,6 +38,7 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
             }
             
             let content = UNMutableNotificationContent()
+            
             content.title = "Feed the cat"
             content.body = "It looks hungry"
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)

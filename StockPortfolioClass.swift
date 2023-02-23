@@ -9,6 +9,8 @@ import Foundation
 import StocksAPI
 
 class StockPortfolio: ObservableObject {
+    let stocksAPI: KISStocksAPI = KISStocksAPI()
+
     @Published var shares = [(code: String, units: Int, averagePurchasePrice: Double)]()
     @Published var quotes: [Quote] = []
 
@@ -66,6 +68,22 @@ class StockPortfolio: ObservableObject {
             }
         }
         return nil
+    }
+    
+    func refreshQuotes() async {
+        do {
+            if (shares.count > 0) {
+                var quotesString = ""
+                for i in 0..<shares.count - 1 {
+                    quotesString += shares[i].code
+                    quotesString += ","
+                }
+                quotesString += shares[shares.count - 1].code
+                quotes = try await stocksAPI.fetchQuotes(symbols: quotesString)
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func getPLFromSymbol(share: (code: String, units: Int, averagePurchasePrice: Double)) -> (changeDollar: Double, changePC: Double, profitLossDollar: Double, profitLossPercent: Double) {

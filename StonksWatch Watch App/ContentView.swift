@@ -6,18 +6,16 @@
 //
 
 import SwiftUI
-import StocksAPI
 import UserNotifications
 
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
-    
+
+    @StateObject var portfolio: StockPortfolio
+
     @AppStorage("DATA") var data = ""
     @AppStorage("NOTIF") var notificationsOn: Bool = false
-    
-    let stocksAPI: KISStocksAPI = KISStocksAPI()
-    @StateObject var portfolio: StockPortfolio
-    
+
     @State var showAddModal: Bool = false
     @State var addCode: String = ""
     @State var addUnits: String = ""
@@ -45,7 +43,7 @@ struct ContentView: View {
                 HStack {
                     Button {
                         Task {
-                            await refresh()
+                            await portfolio.refreshQuotes()
                         }
                     } label: {
                         Image(systemName: "arrow.clockwise.circle")
@@ -94,7 +92,7 @@ struct ContentView: View {
                                 portfolio.remove(code: share.code)
                                 data = portfolio.encode()
                                 Task {
-                                    await refresh()
+                                    await portfolio.refreshQuotes()
                                 } // TODO: Dismiss view
                             } label: {
                                 Image(systemName: "trash.circle")
@@ -141,7 +139,7 @@ struct ContentView: View {
                                         portfolio.update(code: addCode, units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
                                         data = portfolio.encode()
                                         Task {
-                                            await refresh()
+                                            await portfolio.refreshQuotes()
                                         }
                                         showEditModal.toggle()
                                         addCode = ""
@@ -181,7 +179,7 @@ struct ContentView: View {
                                 portfolio.add(code: addCode.uppercased(), units: Int(addUnits)!, averagePurchasePrice: Double(addAveragePurchasePrice)!)
                                 data = portfolio.encode()
                                 Task {
-                                    await refresh()
+                                    await portfolio.refreshQuotes()
                                 }
                                 showAddModal.toggle()
                                 addCode = ""
@@ -198,34 +196,17 @@ struct ContentView: View {
             .onAppear(perform: {
                 Task {
                     print("first load")
-                    await refresh()
+                    await portfolio.refreshQuotes()
                 }
             })
             .onChange(of: scenePhase, perform: { newPhase in
                 if newPhase == .active {
                     Task {
                         print("refreshing")
-                        await refresh()
+                        await portfolio.refreshQuotes()
                     }
                 }
             })
-        }
-    }
-    
-    fileprivate func refresh() async {
-        if (data != "") {
-            do {
-                portfolio.shares = portfolio.decode(data: data)
-                var quotesString = ""
-                for i in 0..<portfolio.shares.count - 1 {
-                    quotesString += portfolio.shares[i].code
-                    quotesString += ","
-                }
-                quotesString += portfolio.shares[portfolio.shares.count - 1].code
-                portfolio.quotes = try await stocksAPI.fetchQuotes(symbols: quotesString)
-            } catch {
-                print(error.localizedDescription)
-            }
         }
     }
 }
