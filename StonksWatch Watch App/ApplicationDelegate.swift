@@ -29,18 +29,12 @@ class ApplicationDelegate: NSObject, WKApplicationDelegate {
                 }
             }
             
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { success, error in
-                if success {
-                    let content = UNMutableNotificationContent()
-                    content.title = "Feed the cat"
-                    content.body = "It looks hungry"
-                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                    UNUserNotificationCenter.current().add(request)
-                } else if let error = error {
-                    print(error.localizedDescription)
-                }
-            }
+            let content = UNMutableNotificationContent()
+            content.title = "Feed the cat"
+            content.body = "It looks hungry"
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request)
             
             task.setTaskCompletedWithSnapshot(false)
         }
