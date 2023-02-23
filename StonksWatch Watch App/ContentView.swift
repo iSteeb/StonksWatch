@@ -16,7 +16,6 @@ struct ContentView: View {
     @AppStorage("NOTIF") var notificationsOn: Bool = false
     
     let stocksAPI: KISStocksAPI = KISStocksAPI()
-    @State var quotes: [Quote] = []
     @StateObject var portfolio: StockPortfolio = StockPortfolio()
     
     @State var showAddModal: Bool = false
@@ -30,16 +29,16 @@ struct ContentView: View {
             NavigationStack {
                 HStack {
                     VStack {
-                        Text("Δ $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangeDollar, specifier: "%.2f")")
+                        Text("Δ $\(portfolio.getPortfolioPLTotals().totalChangeDollar, specifier: "%.2f")")
                             .font(.footnote)
-                        Text("Δ \(portfolio.getPortfolioPLTotals(quotes: quotes).totalChangePC, specifier: "%.2f")%")
+                        Text("Δ \(portfolio.getPortfolioPLTotals().totalChangePC, specifier: "%.2f")%")
                             .font(.footnote)
                     }
                     Spacer()
                     VStack {
-                        Text("± $\(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossDollar, specifier: "%.2f")")
+                        Text("± $\(portfolio.getPortfolioPLTotals().totalProfitLossDollar, specifier: "%.2f")")
                             .font(.footnote)
-                        Text("± \(portfolio.getPortfolioPLTotals(quotes: quotes).totalProfitLossPercent, specifier: "%.2f")%")
+                        Text("± \(portfolio.getPortfolioPLTotals().totalProfitLossPercent, specifier: "%.2f")%")
                             .font(.footnote)
                     }
                 }
@@ -104,18 +103,18 @@ struct ContentView: View {
                         Text(share.code)
                         Text("\(share.units) units")
                         Text("Av. PP $\(share.averagePurchasePrice, specifier: "%.4f")")
-                        Text("Δ $\(portfolio.getPLFromSymbol(share: share, quotes: quotes).changeDollar, specifier: "%.2f")")
-                        Text("Δ \(portfolio.getPLFromSymbol(share: share, quotes: quotes).changePC, specifier: "%.2f")%")
-                        Text("± $\(portfolio.getPLFromSymbol(share: share, quotes: quotes).profitLossDollar, specifier: "%.2f")")
-                        Text("± \(portfolio.getPLFromSymbol(share: share, quotes: quotes).profitLossPercent, specifier: "%.2f")%")
+                        Text("Δ $\(portfolio.getPLFromSymbol(share: share).changeDollar, specifier: "%.2f")")
+                        Text("Δ \(portfolio.getPLFromSymbol(share: share).changePC, specifier: "%.2f")%")
+                        Text("± $\(portfolio.getPLFromSymbol(share: share).profitLossDollar, specifier: "%.2f")")
+                        Text("± \(portfolio.getPLFromSymbol(share: share).profitLossPercent, specifier: "%.2f")%")
                     } label: {
                         HStack {
                             Text(share.code)
                             Spacer()
                             VStack {
-                                Text("Δ $\(portfolio.getPLFromSymbol(share: share, quotes: quotes).changeDollar, specifier: "%.2f")")
+                                Text("Δ $\(portfolio.getPLFromSymbol(share: share).changeDollar, specifier: "%.2f")")
                                     .font(.footnote)
-                                Text("± \(portfolio.getPLFromSymbol(share: share, quotes: quotes).profitLossPercent, specifier: "%.2f")%")
+                                Text("± \(portfolio.getPLFromSymbol(share: share).profitLossPercent, specifier: "%.2f")%")
                                     .font(.footnote)
                             }
                         }
@@ -223,7 +222,7 @@ struct ContentView: View {
                     quotesString += ","
                 }
                 quotesString += portfolio.shares[portfolio.shares.count - 1].code
-                quotes = try await stocksAPI.fetchQuotes(symbols: quotesString)
+                portfolio.quotes = try await stocksAPI.fetchQuotes(symbols: quotesString)
             } catch {
                 print(error.localizedDescription)
             }

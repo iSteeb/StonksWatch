@@ -10,7 +10,8 @@ import StocksAPI
 
 class StockPortfolio: ObservableObject {
     @Published var shares = [(code: String, units: Int, averagePurchasePrice: Double)]()
-    
+    @Published var quotes: [Quote] = []
+
     init() {
         self.shares = []
     }
@@ -58,7 +59,7 @@ class StockPortfolio: ObservableObject {
     }
     
     
-    func getQuoteFromSymbol(code: String, quotes: [Quote]) -> Quote? {
+    func getQuoteFromSymbol(code: String) -> Quote? {
         for i in 0..<quotes.count {
             if (quotes[i].symbol == code) {
                 return quotes[i]
@@ -67,8 +68,8 @@ class StockPortfolio: ObservableObject {
         return nil
     }
     
-    func getPLFromSymbol(share: (code: String, units: Int, averagePurchasePrice: Double), quotes: [Quote]) -> (changeDollar: Double, changePC: Double, profitLossDollar: Double, profitLossPercent: Double) {
-        let quote = getQuoteFromSymbol(code: share.code, quotes: quotes)
+    func getPLFromSymbol(share: (code: String, units: Int, averagePurchasePrice: Double)) -> (changeDollar: Double, changePC: Double, profitLossDollar: Double, profitLossPercent: Double) {
+        let quote = getQuoteFromSymbol(code: share.code)
         if ((quote) != nil) {
             let totalPurchasePrice: Double = Double(share.units) * share.averagePurchasePrice
             let totalCurrentPrice: Double = Double(share.units) * quote!.regularMarketPrice!
@@ -80,14 +81,14 @@ class StockPortfolio: ObservableObject {
         return (0.0,0.0,0.0,0.0) // TODO: FIX THIS LAZY ERROR RETURN
     }
     
-    func getPortfolioPLTotals(quotes: [Quote]) -> (totalChangeDollar: Double, totalChangePC: Double, totalProfitLossDollar: Double, totalProfitLossPercent: Double){
+    func getPortfolioPLTotals() -> (totalChangeDollar: Double, totalChangePC: Double, totalProfitLossDollar: Double, totalProfitLossPercent: Double){
         var totalSpent: Double = 0.0
         var totalGained: Double = 0.0
         var totalChangeDollar: Double = 0.0
         shares.forEach { share in
             totalSpent += Double(share.units) * share.averagePurchasePrice
-            totalGained += getPLFromSymbol(share: share, quotes: quotes).profitLossDollar
-            totalChangeDollar += getPLFromSymbol(share: share, quotes: quotes).changeDollar
+            totalGained += getPLFromSymbol(share: share).profitLossDollar
+            totalChangeDollar += getPLFromSymbol(share: share).changeDollar
         }
         return (totalChangeDollar, totalChangeDollar / (totalSpent + totalGained - totalChangeDollar) * 100, totalGained, totalGained / totalSpent * 100)
     }
