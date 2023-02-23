@@ -16,7 +16,7 @@ struct ContentView: View {
     @AppStorage("NOTIF") var notificationsOn: Bool = false
     
     let stocksAPI: KISStocksAPI = KISStocksAPI()
-    @StateObject var portfolio: StockPortfolio = StockPortfolio()
+    @StateObject var portfolio: StockPortfolio
     
     @State var showAddModal: Bool = false
     @State var addCode: String = ""
@@ -232,6 +232,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(portfolio: StockPortfolio())
     }
 }
