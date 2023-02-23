@@ -10,12 +10,15 @@ import StocksAPI
 import UserNotifications
 
 struct ContentView: View {
+    @Environment(\.scenePhase) var scenePhase
+    
     @AppStorage("DATA") var data = ""
     @AppStorage("NOTIF") var notificationsOn: Bool = false
-
+    
     let stocksAPI: KISStocksAPI = KISStocksAPI()
     @State var quotes: [Quote] = []
     @StateObject var portfolio: StockPortfolio = StockPortfolio()
+    
     @State var showAddModal: Bool = false
     @State var addCode: String = ""
     @State var addUnits: String = ""
@@ -57,22 +60,18 @@ struct ContentView: View {
                         Button {
                             notificationsOn.toggle()
                             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                            // TODO: remove all background tasks
                         } label: {
                             Image(systemName: "bell.circle")
                         }
                     } else {
                         Button {
-                            UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { success, error in
-                                if success {
-                                    notificationsOn.toggle()
-                                    let content = UNMutableNotificationContent()
-                                    content.title = "Feed the cat"
-                                    content.body = "It looks hungry"
-                                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-                                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                                    UNUserNotificationCenter.current().add(request)
-                                } else if let error = error {
-                                    print(error.localizedDescription)
+                            notificationsOn.toggle()
+                            WKApplication.shared().scheduleBackgroundRefresh(withPreferredDate: Date(timeIntervalSinceNow: 5), userInfo: nil) { (error: Error?) in
+                                if let error = error {
+                                    print("Error occured while scheduling background refresh: \(error.localizedDescription)")
+                                } else {
+                                    print("scheduled")
                                 }
                             }
                         } label: {
@@ -197,9 +196,20 @@ struct ContentView: View {
                 }
                 .navigationBarHidden(true)
             })
-            .task {
-                await refresh()
-            }
+            .onAppear(perform: {
+                Task {
+                    print("first load")
+                    await refresh()
+                }
+            })
+            .onChange(of: scenePhase, perform: { newPhase in
+                if newPhase == .active {
+                    Task {
+                        print("refreshing")
+                        await refresh()
+                    }
+                }
+            })
         }
     }
     

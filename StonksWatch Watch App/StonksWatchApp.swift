@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct StonksWatch_Watch_AppApp: App {
+    @WKApplicationDelegateAdaptor var ApplicationDelegate: ApplicationDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()
